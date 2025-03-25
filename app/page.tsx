@@ -1,5 +1,5 @@
 'use client'
-import Projects from "@/components/sections/projects";
+// import Projects from "@/components/sections/projects";
 import { Footer } from "@/components/sections/footer";
 import Hero from "@/components/sections/hero";
 import { FloatingNav } from "@/components/ui/floating-navbar";
@@ -14,7 +14,7 @@ export default function Home() {
         <FloatingNav navItems={navItems} />
         <Hero />
         <Skills />
-        <Projects />
+        {/* <Projects /> */}
         <Footer />
       </div>
     </main>
