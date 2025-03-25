@@ -1,5 +1,5 @@
 'use client'
-import About from "@/components/sections/about";
+import Projects from "@/components/sections/projects";
 import { Footer } from "@/components/sections/footer";
 import Hero from "@/components/sections/hero";
 import { FloatingNav } from "@/components/ui/floating-navbar";
@@ -12,7 +12,7 @@ export default function Home() {
       <div className="w-full">
         <FloatingNav navItems={navItems} />
         <Hero />
-        <About />
+        <Projects />
         <Footer />
       </div>
     </main>
