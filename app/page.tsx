@@ -4,6 +4,7 @@ import { Footer } from "@/components/sections/footer";
 import Hero from "@/components/sections/hero";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { navItems } from "@/data";
+import Skills from "@/components/sections/skills";
 
 
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
       <div className="w-full">
         <FloatingNav navItems={navItems} />
         <Hero />
+        <Skills />
         <Projects />
         <Footer />
       </div>

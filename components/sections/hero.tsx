@@ -16,7 +16,7 @@ function Hero() {
                                 words="Front End Web Developer"
                             />
                         </div> */}
-                        <div className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500">
+                        <div className="max-w-[89vw] md:max-w-2xl lg:max-w-[60vw] flex flex-col items-center justify-center">
                             <TextGenerateEffect
                                 className="text-center text-[40px] md:text-5xl lg:text-6xl"
                                 words="Front End Web Developer"
