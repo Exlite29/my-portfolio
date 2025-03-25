@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { BackgroundBeamsWithCollision } from '../ui/background-beams-with-collision'
 import { TextGenerateEffect } from '../ui/TextGenerateEffect'

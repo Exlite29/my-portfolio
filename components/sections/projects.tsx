@@ -1,5 +1,5 @@
 
-
+'use client'
 import { useGlobalContext } from '@/context/GlobalProvider';
 import React, { useEffect } from 'react'
 import { useIntersectionObserver } from 'usehooks-ts';

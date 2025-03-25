@@ -1,5 +1,4 @@
 // components/Footer.tsx
-import Link from "next/link";
 import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
 
 export const Footer = () => {
