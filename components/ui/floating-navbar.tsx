@@ -94,11 +94,7 @@
 
 "use client";
 import React from "react";
-import {
-    motion,
-    AnimatePresence,
-    useScroll,
-} from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ModeToggle } from "../mode-toggle";
@@ -118,7 +114,6 @@ export const FloatingNav = ({
     className?: string;
 }) => {
     const isDesktop = useMediaQuery("(min-width: 1280px)");
-    const { scrollYProgress } = useScroll();
 
     return (
         <AnimatePresence mode="wait">
@@ -129,10 +124,7 @@ export const FloatingNav = ({
                     Ariel Agdon
                 </p>
                 {isDesktop && (
-                    <div className={cn(
-                        className
-                    )}
-                    >
+                    <div className={cn(className)}>
                         <div className="flex items-center justify-center space-x-14">
                             {navItems.map((navItem: NavItem, idx: number) => (
                                 <Link
