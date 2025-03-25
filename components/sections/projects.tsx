@@ -26,15 +26,7 @@ function About() {
                 >
                     Projects
                 </h1>
-                <span
-                    className="text-balance mt-2 max-w-prose text-gray-500 dark:text-white"
-                    data-aos="fade-up"
-                    data-aos-offset="200"
-                    data-aos-delay="100"
-                    data-aos-once="true"
-                >
-                    Here are some of the projects I've worked on.
-                </span>
+
             </div>
         </section>
     )
