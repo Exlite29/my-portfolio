@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`max-h-[400rem] ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`max-h-[400rem] dark:bg-[#222831] ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           <ThemeProvider
@@ -39,7 +39,6 @@ export default function RootLayout({
           >
             {children}
           </ThemeProvider>
-
           <Toaster
             position="bottom-right"
             reverseOrder={false}
@@ -50,7 +49,6 @@ export default function RootLayout({
               duration: 5000,
             }}
           />
-
         </Providers>
       </body>
 
