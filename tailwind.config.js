@@ -5,14 +5,18 @@ const {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    // your paths
-    "./src/**/*.{ts,tsx}",
+    "./src/**/*.{js,ts,jsx,tsx}", // Covers JS/TS files
+    "./public/index.html", // If using HTML files
   ],
   darkMode: "class",
   theme: {
     extend: {
       animation: {
         aurora: "aurora 60s linear infinite",
+        bounceOnce: "bounce 0.8s ease-out 1",
+      },
+      fontFamily: {
+        oswald: ["Oswald", "sans-serif"],
       },
       keyframes: {
         aurora: {
@@ -23,6 +27,11 @@ module.exports = {
             backgroundPosition: "350% 50%, 350% 50%",
           },
         },
+      },
+      colors: {
+        customText: "#00ADB5",
+        customTextLight: "#5bc0de", // lighter variant
+        customTextDark: "#008b94", // darker variant
       },
     },
   },

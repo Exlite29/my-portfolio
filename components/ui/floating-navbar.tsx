@@ -12,6 +12,7 @@ interface NavItem {
     icon?: React.JSX.Element;
 }
 
+
 export const FloatingNav = ({
     navItems,
     className,
@@ -26,9 +27,9 @@ export const FloatingNav = ({
             <motion.div
                 className="max-lg:px-4 z-10 flex items-center -translate-x-2/4 left-2/4 max-w-7xl w-full justify-between absolute top-10"
             >
-                <p className="flex text-center text-2xl font-bold tracking-wide">
-                    Ariel Agdon
-                </p>
+                <h3 className="hidden lg:flex text-center text-2xl font-stretch-100% tracking-wide">
+                    Ariel A.
+                </h3>
                 {isDesktop && (
                     <div className={cn(className)}>
                         <div className="flex items-center justify-center space-x-14">
