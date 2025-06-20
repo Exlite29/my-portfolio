@@ -1,4 +1,4 @@
-
+'use client'
 import React from 'react'
 import doodle from '../../assets/d-round.png'
 import sitting from '../../assets/sitting.png'

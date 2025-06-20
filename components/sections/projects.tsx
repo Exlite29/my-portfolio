@@ -40,7 +40,7 @@ function Projects() {
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredProjects.map((project) => (
                             <div key={project.id} className="overflow-hidden rounded-lg shadow-lg transition-transform hover:scale-105">
-                                <Image
+                                <img
                                     src={project.image}
                                     alt={project.title}
                                     width={400} // Set appropriate width
