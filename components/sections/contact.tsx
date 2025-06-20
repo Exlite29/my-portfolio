@@ -1,3 +1,4 @@
+import Image from 'next/image'; // Add this import
 import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
 
@@ -12,14 +13,18 @@ function Contact() {
                     </h2>
 
                     <div className="flex items-start gap-8">
-                        <img
-                            src={arrow.src}
+                        <Image
+                            src={arrow}
                             alt="Decorative arrow"
+                            width={64}
+                            height={64}
                             className="w-16 h-16 mt-4"
                         />
-                        <img
-                            src={ladder.src}
+                        <Image
+                            src={ladder}
                             alt="Decorative ladder"
+                            width={256}
+                            height={256}
                             className="w-64 h-64 object-contain"
                         />
                     </div>

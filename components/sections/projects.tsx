@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Image from 'next/image'; // Add this import
 import { projects } from '@/data';
 
 function Projects() {
@@ -14,7 +15,6 @@ function Projects() {
     const filteredProjects = activeFilter === 'all'
         ? projects
         : projects.filter(project => project.category === activeFilter);
-
 
     return (
         <section id='projects' className="flex justify-center text-center px-50 py-50">
@@ -40,9 +40,11 @@ function Projects() {
                     <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                         {filteredProjects.map((project) => (
                             <div key={project.id} className="overflow-hidden rounded-lg shadow-lg transition-transform hover:scale-105">
-                                <img
+                                <Image
                                     src={project.image}
                                     alt={project.title}
+                                    width={400} // Set appropriate width
+                                    height={192} // Set appropriate height (matching your h-48 class)
                                     className="w-full h-48 object-cover"
                                 />
                                 <div className="p-6 bg-white dark:bg-gray-800">
@@ -58,7 +60,6 @@ function Projects() {
                                 </div>
                             </div>
                         ))}
-
                     </div>
                 </div>
             </div>
