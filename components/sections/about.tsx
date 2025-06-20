@@ -18,6 +18,7 @@ function About() {
                             width={64}
                             height={64}
                             className="w-12 h-12 sm:w-16 sm:h-16"
+                            priority // Add for above-the-fold images
                         />
                     </div>
 
@@ -37,6 +38,7 @@ function About() {
                     <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                         Hi, I&apos;m Ariel – a passionate Jr. Front End Developer dedicated to turning design ideas into interactive, user-friendly websites. Let&apos;s build something amazing together!
                     </p>
+
 
                     <Image
                         src={vector}
