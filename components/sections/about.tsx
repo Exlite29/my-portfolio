@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'; // Add this import
 import notes from '../../assets/musicnotes.png';
 import doodleItems from '../../assets/doodleitems.png';
 import work from '../../assets/Group62.png';
@@ -25,8 +26,8 @@ function About() {
                         <h2 className="text-3xl sm:text-4xl font-bold">
                             About <span className="text-[#00ADB5]">me</span>
                         </h2>
-                        <img
-                            src={lightbulb.src}
+                        <Image
+                            src={lightbulb}
                             alt="Light bulb"
                             width={64}
                             height={64}
@@ -34,13 +35,13 @@ function About() {
                         />
                     </div>
 
-                    {/* <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                    <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
                         Hi, I&apos;m Ariel &ndash; a passionate Jr. Front End Developer dedicated to turning design ideas into interactive, user-friendly websites. Let&apos;s build something amazing together!
-                    </p> */}
+                    </p>
 
 
-                    <img
-                        src={vector.src}
+                    <Image
+                        src={vector}
                         alt="Decorative vector"
                         width={128}
                         height={128}
@@ -50,16 +51,16 @@ function About() {
 
                 {/* Right Content - Images */}
                 <div className="w-full lg:w-1/2 relative flex justify-center items-center min-h-[300px]">
-                    <img
-                        src={doodleItems.src}
+                    <Image
+                        src={doodleItems}
                         alt="Doodle items"
                         width={500}
                         height={500}
                         className="absolute w-full max-w-md opacity-70"
                         style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
                     />
-                    <img
-                        src={work.src}
+                    <Image
+                        src={work}
                         alt="Work illustration"
                         width={400}
                         height={400}
