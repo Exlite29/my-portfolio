@@ -3,7 +3,6 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-// import { ModeToggle } from "../mode-toggle";
 import { useMediaQuery } from "usehooks-ts";
 
 interface NavItem {
@@ -45,7 +44,6 @@ export const FloatingNav = ({
                                     <span className="hidden sm:block text-sm">{navItem.name}</span>
                                 </Link>
                             ))}
-                            {/* <ModeToggle /> */}
                         </div>
                     </div>
                 )}
