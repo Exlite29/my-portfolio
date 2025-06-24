@@ -72,7 +72,7 @@ function Hero() {
                                     whileTap={{ scale: 0.95 }}
                                     className="px-6 py-3 bg-[#00ADB5] text-white font-bold rounded-3xl shadow-lg hover:bg-[#007F87] transition-all duration-300"
                                 >
-                                    Hire me
+                                    <a href="#contact"> Hire me</a>
                                 </motion.button>
 
                                 <motion.button

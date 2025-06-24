@@ -45,7 +45,7 @@ export const FloatingNav = ({
                                     <span className="hidden sm:block text-sm">{navItem.name}</span>
                                 </Link>
                             ))}
-                            <ModeToggle />
+                            {/* <ModeToggle /> */}
                         </div>
                     </div>
                 )}
