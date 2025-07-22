@@ -16,7 +16,7 @@ function Projects() {
         : projects.filter(project => project.category === activeFilter);
 
     return (
-        <section id='projects' className="flex justify-center text-center px-50 py-50">
+        <section id='projects' className="flex justify-center items-center py-16 px-4 sm:px-8 lg:px-26 overflow-hidden">
             <div className="max-w-screen-xl px-4 py-8 mx-auto lg:py-16 w-full flex justify-start">
                 <div className="w-full">
                     <h2 className="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white text-left">

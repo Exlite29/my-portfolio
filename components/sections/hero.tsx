@@ -7,9 +7,7 @@ import { Download } from 'lucide-react'
 import { motion } from 'framer-motion';
 
 function Hero() {
-
     return (
-
         <section id='home' className="relative overflow-hidden">
             {/* Animated background elements */}
             <motion.div

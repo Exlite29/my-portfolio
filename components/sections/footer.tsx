@@ -36,7 +36,7 @@ export const Footer = () => {
 
                 {/* Copyright Notice */}
                 <p className="text-neutral-500 text-sm">
-                    &copy; {new Date().getFullYear()} Your Name. All rights reserved.
+                    &copy; {new Date().getFullYear()} Ariel. All rights reserved.
                 </p>
             </div>
         </footer>
