@@ -1,6 +1,8 @@
 
 import { HomeIcon, UserIcon, MessageCircleIcon } from "lucide-react";
 
+export const Email = process.env.REACT_APP_EMAIL
+
 export const navItems = [
     {
         name: "Home",
