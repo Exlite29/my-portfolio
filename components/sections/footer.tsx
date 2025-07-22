@@ -26,7 +26,7 @@ export const Footer = () => {
                         <FaLinkedin size={24} />
                     </a>
                     <a
-                        href="mailto:youremail@example.com"
+                        href={`mailto:${process.env.REACT_APP_EMAIL}`}
                         className="hover:text-neutral-400 transition-colors"
                         aria-label="Email"
                     >
