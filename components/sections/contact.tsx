@@ -96,11 +96,15 @@ function Contact() {
                 message: data.message || 'Message sent successfully!'
             });
             setFormData(initialFormData);
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Submission error:', error);
+            let errorMessage = 'Failed to send message. Please try again later.';
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
             setSubmitStatus({
                 success: false,
-                message: error.message || 'Failed to send message. Please try again later.',
+                message: errorMessage,
             });
         } finally {
             setIsSubmitting(false);
