@@ -44,8 +44,8 @@ function Contact() {
         }));
     };
 
-    const handleSubmit = async () => {
-
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
         setIsSubmitting(true);
         setSubmitStatus(initialSubmitStatus);
 
@@ -82,7 +82,7 @@ function Contact() {
 
             try {
                 data = JSON.parse(text);
-            } catch (e) {
+            } catch {
                 console.error('Failed to parse response:', text);
                 throw new Error('Server returned invalid JSON');
             }
@@ -96,16 +96,11 @@ function Contact() {
                 message: data.message || 'Message sent successfully!'
             });
             setFormData(initialFormData);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Submission error:', error);
-
-            const message = error instanceof Error
-                ? error.message
-                : 'Failed to send message. Please try again later.';
-
             setSubmitStatus({
                 success: false,
-                message,
+                message: error.message || 'Failed to send message. Please try again later.',
             });
         } finally {
             setIsSubmitting(false);
