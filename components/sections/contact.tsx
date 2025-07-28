@@ -1,8 +1,7 @@
-'use client'
+'use client';
 import { useState } from 'react';
 import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
-import { Email } from '../../data/index'
 
 interface FormData {
     name: string;
@@ -15,82 +14,93 @@ interface SubmitStatus {
     message: string;
 }
 
-interface SanitizedData {
-    name: string;
-    email: string;
-    message: string;
+const initialFormData: FormData = {
+    name: '',
+    email: '',
+    message: '',
+};
+
+const initialSubmitStatus: SubmitStatus = {
+    success: false,
+    message: '',
+};
+
+function sanitizeInput(input: string): string {
+    return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function Contact() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
+    const [formData, setFormData] = useState<FormData>(initialFormData);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [submitStatus, setSubmitStatus] = useState({
-        success: false,
-        message: ''
-    });
+    const [submitStatus, setSubmitStatus] = useState<SubmitStatus>(initialSubmitStatus);
 
-
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         const { id, value } = e.target;
-        setFormData((prev: FormData) => ({
+        setFormData((prev) => ({
             ...prev,
-            [id]: value
+            [id]: value,
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
-        setSubmitStatus({ success: false, message: '' });
+        setSubmitStatus(initialSubmitStatus);
 
         try {
-            // Client-side validation
+            // Validation
             if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
                 throw new Error('All fields are required');
             }
-
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
                 throw new Error('Please enter a valid email address');
             }
 
-            // Sanitize inputs (basic example - consider using a library like DOMPurify)
-            const sanitizedData: SanitizedData = {
-                name: formData.name.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
-                email: formData.email.replace(/</g, '&lt;').replace(/>/g, '&gt;'),
-                message: formData.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            // Sanitize
+            const sanitizedData = {
+                name: sanitizeInput(formData.name),
+                email: sanitizeInput(formData.email),
+                message: sanitizeInput(formData.message),
             };
 
-            // Add CSRF token if your backend requires it
-            const csrfToken: string | undefined = document.cookie
-                .split('; ')
-                .find((row: string) => row.startsWith('XSRF-TOKEN='))
-                ?.split('=')[1];
-
-            const response: Response = await fetch('/api/contact', {
+            const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken || ''
                 },
-                body: JSON.stringify(sanitizedData)
+                body: JSON.stringify({
+                    name: sanitizedData.name,
+                    email: sanitizedData.email,
+                    message: sanitizedData.message
+                }),
             });
 
-            if (!response.ok) {
-                const errorData: { message?: string } = await response.json();
-                throw new Error(errorData.message || 'Submission failed');
+            const text = await response.text();
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                console.error('Failed to parse response:', text);
+                throw new Error('Server returned invalid JSON');
             }
 
-            setSubmitStatus({ success: true, message: 'Message sent successfully!' });
-            setFormData({ name: '', email: '', message: '' });
-        } catch (error: unknown) {
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to send message');
+            }
+
+            setSubmitStatus({
+                success: true,
+                message: data.message || 'Message sent successfully!'
+            });
+            setFormData(initialFormData);
+        } catch (error: any) {
+            console.error('Submission error:', error);
             setSubmitStatus({
                 success: false,
-                message: (error instanceof Error) ? error.message : 'An unexpected error occurred'
+                message: error.message || 'Failed to send message. Please try again later.',
             });
         } finally {
             setIsSubmitting(false);
@@ -98,14 +108,16 @@ function Contact() {
     };
 
     return (
-        <section id='contact' className="flex justify-center items-center py-16 px-4 sm:px-8 lg:px-16">
+        <section
+            id="contact"
+            className="flex justify-center items-center py-16 px-4 sm:px-8 lg:px-16"
+        >
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 w-full max-w-6xl">
-                {/* Left side with heading and decorative elements */}
+                {/* Left: Heading & Decorative */}
                 <div className="w-full lg:w-1/2 relative">
                     <h2 className="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white text-left">
                         Got a project in <span className="text-[#00ADB5]">mind?</span>
                     </h2>
-
                     <div className="flex items-start gap-8">
                         <img
                             src={arrow.src}
@@ -123,12 +135,14 @@ function Contact() {
                         />
                     </div>
                 </div>
-
-                {/* Right side with contact form */}
+                {/* Right: Contact Form */}
                 <div className="w-full lg:w-1/2">
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-1">
-                            <label htmlFor="name" className="block text-lg font-medium text-gray-900 dark:text-white">
+                        <div>
+                            <label
+                                htmlFor="name"
+                                className="block text-lg font-medium text-gray-900 dark:text-white"
+                            >
                                 Your name
                             </label>
                             <input
@@ -140,11 +154,14 @@ function Contact() {
                                 placeholder="Name"
                                 required
                                 maxLength={100}
+                                autoComplete="name"
                             />
                         </div>
-
-                        <div className="space-y-1">
-                            <label htmlFor="email" className="block text-lg font-medium text-gray-900 dark:text-white">
+                        <div>
+                            <label
+                                htmlFor="email"
+                                className="block text-lg font-medium text-gray-900 dark:text-white"
+                            >
                                 Your email
                             </label>
                             <input
@@ -156,11 +173,14 @@ function Contact() {
                                 placeholder="Email"
                                 required
                                 maxLength={100}
+                                autoComplete="email"
                             />
                         </div>
-
-                        <div className="space-y-1">
-                            <label htmlFor="message" className="block text-lg font-medium text-gray-900 dark:text-white">
+                        <div>
+                            <label
+                                htmlFor="message"
+                                className="block text-lg font-medium text-gray-900 dark:text-white"
+                            >
                                 Your message
                             </label>
                             <textarea
@@ -172,19 +192,23 @@ function Contact() {
                                 placeholder="Message"
                                 required
                                 maxLength={2000}
-                            ></textarea>
+                            />
                         </div>
-
                         {submitStatus.message && (
-                            <div className={`p-4 rounded-lg ${submitStatus.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            <div
+                                className={`p-4 rounded-lg ${submitStatus.success
+                                    ? 'bg-green-100 text-green-800'
+                                    : 'bg-red-100 text-red-800'
+                                    }`}
+                            >
                                 {submitStatus.message}
                             </div>
                         )}
-
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className={`w-full px-6 py-3 bg-[#00ADB5] hover:bg-[#009fae] text-white font-bold rounded-lg shadow-md transition-colors duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+                            className={`w-full px-6 py-3 bg-[#00ADB5] hover:bg-[#009fae] text-white font-bold rounded-lg shadow-md transition-colors duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                                }`}
                         >
                             {isSubmitting ? 'Sending...' : 'Send Message'}
                         </button>
