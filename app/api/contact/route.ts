@@ -33,12 +33,15 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ message: "Message sent successfully!" });
-  } catch (error: any) {
+  } catch (error) {
     console.error("API Error:", error);
+
+    const errMessage = error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
       {
         message: "Failed to send message",
-        error: error.message || "Unknown error",
+        error: errMessage,
       },
       { status: 500 }
     );
