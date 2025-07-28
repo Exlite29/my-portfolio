@@ -44,8 +44,8 @@ function Contact() {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
+
         setIsSubmitting(true);
         setSubmitStatus(initialSubmitStatus);
 
@@ -96,11 +96,16 @@ function Contact() {
                 message: data.message || 'Message sent successfully!'
             });
             setFormData(initialFormData);
-        } catch (error: any) {
+        } catch (error) {
             console.error('Submission error:', error);
+
+            const message = error instanceof Error
+                ? error.message
+                : 'Failed to send message. Please try again later.';
+
             setSubmitStatus({
                 success: false,
-                message: error.message || 'Failed to send message. Please try again later.',
+                message,
             });
         } finally {
             setIsSubmitting(false);
