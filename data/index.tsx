@@ -1,5 +1,10 @@
 
 import { HomeIcon, UserIcon, MessageCircleIcon } from "lucide-react";
+import dujas from '../public/dujas.png';
+import nextmba from '../public/nextmba.png';
+import oms from '../public/oms.png';
+import revscout from '../public/revscoutadmin.png'
+import { link } from "fs";
 
 export const emailApi = process.env.REACT_APP_EMAIL || '';
 
@@ -35,44 +40,34 @@ export const navItems = [
 export const projects = [
     {
         id: 1,
-        title: "E-commerce Website",
-        description: "A modern online shopping platform with payment integration",
+        title: "Dujas Cleaning Ltd",
+        description: "An online cleaning service booking platform with scheduling and payment features",
         category: "web",
-        image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+        image: dujas.src,
+        link: "https://dujascleaning.com/"
     },
     {
         id: 2,
-        title: "Fitness Mobile App",
-        description: "Workout tracking application with personalized plans",
+        title: "NextMBA",
+        description: "NEXT MBA is a global online education platform that offers practical and professional knowledge in leadership, digital marketing, and technology-related fields.",
         category: "mobile",
-        image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+        image: nextmba.src,
+        link: "https://admin.nextmba.com/"
     },
     {
         id: 3,
-        title: "Portfolio Website",
+        title: "OMS G-Rocket",
         description: "Minimalist portfolio design for creative professionals",
         category: "web",
-        image: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+        image: oms.src,
+        link: "https://g-rocket.me/"
     },
     {
         id: 4,
-        title: "AR Navigation",
+        title: "RevScout",
         description: "Augmented reality navigation prototype",
         category: "other",
-        image: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
+        image: revscout.src,
+        link: "https://revscout.io/"
     },
-    {
-        id: 5,
-        title: "Recipe Mobile App",
-        description: "Cooking app with step-by-step instructions",
-        category: "mobile",
-        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
-    },
-    {
-        id: 6,
-        title: "Dashboard UI",
-        description: "Analytics dashboard for business metrics",
-        category: "web",
-        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1000&q=80"
-    }
 ]

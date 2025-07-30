@@ -26,7 +26,10 @@ export const FloatingNav = ({
             <motion.div
                 className="max-lg:px-4 z-10 flex items-center -translate-x-2/4 left-2/4 max-w-7xl w-full justify-between absolute top-10"
             >
-                <h3 className="hidden lg:flex text-center text-2xl font-stretch-100% tracking-wide">
+                <h3
+                    onClick={() => window.location.href = '#home'}
+                    className="hidden lg:flex text-center text-2xl font-stretch-100% tracking-wide cursor-pointer"
+                >
                     Ariel A.
                 </h3>
                 {isDesktop && (
