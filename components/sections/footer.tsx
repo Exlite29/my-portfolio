@@ -1,44 +1,62 @@
-// components/Footer.tsx
-import { FaGithub, FaLinkedin, FaEnvelope } from "react-icons/fa";
+'use client';
+
+import { motion } from 'framer-motion';
+import { socialLinks } from '@/data/socialLinks';
+import { SocialIcon } from '@/components/ui/social-icon';
+
+const footerVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+};
+
+const socialLinksVariants = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { staggerChildren: 0.1 }
+};
+
+const iconVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 }
+};
 
 export const Footer = () => {
-    return (
-        <footer className="py-6 mt-auto">
-            <div className="container mx-auto px-4 text-center">
-                {/* Social Media Links */}
-                <div className="flex justify-center space-x-6 mb-4">
-                    <a
-                        href="https://github.com/Exlite29"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-neutral-400 transition-colors"
-                        aria-label="GitHub"
-                    >
-                        <FaGithub size={24} />
-                    </a>
-                    <a
-                        href="https://linkedin.com/in/ariel-agdon-916846160/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-neutral-400 transition-colors"
-                        aria-label="LinkedIn"
-                    >
-                        <FaLinkedin size={24} />
-                    </a>
-                    <a
-                        href={`mailto:${process.env.REACT_APP_EMAIL}`}
-                        className="hover:text-neutral-400 transition-colors"
-                        aria-label="Email"
-                    >
-                        <FaEnvelope size={24} />
-                    </a>
-                </div>
+    const currentYear = new Date().getFullYear();
 
-                {/* Copyright Notice */}
-                <p className="text-neutral-500 text-sm">
-                    &copy; {new Date().getFullYear()} Ariel. All rights reserved.
-                </p>
+    return (
+        <motion.footer
+            className="py-6 mt-auto"
+            initial="initial"
+            whileInView="animate"
+            variants={footerVariants}
+            viewport={{ once: true }}
+        >
+            <div className="container mx-auto px-4 text-center">
+                <motion.div
+                    className="flex justify-center space-x-6 mb-4"
+                    variants={socialLinksVariants}
+                >
+                    {socialLinks.map((link) => (
+                        <motion.div key={link.id} variants={iconVariants}>
+                            <SocialIcon
+                                href={link.href}
+                                icon={link.icon}
+                                label={link.label}
+                            />
+                        </motion.div>
+                    ))}
+                </motion.div>
+
+                <motion.p
+                    className="text-neutral-500 text-sm"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                >
+                    &copy; {currentYear} Ariel. All rights reserved.
+                </motion.p>
             </div>
-        </footer>
+        </motion.footer>
     );
 };

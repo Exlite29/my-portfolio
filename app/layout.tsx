@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/context/Providers";
 
 const geistSans = Geist({
@@ -28,30 +28,24 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`max-h-[400rem] dark:bg-[#222831] ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
-        <Providers>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-          <Toaster
-            position="bottom-right"
-            reverseOrder={false}
-            containerStyle={{ zIndex: 99999 }}
-            toastOptions={{
-              // Define default options
-              className: "",
-              duration: 5000,
-            }}
-          />
-        </Providers>
+        <div className="min-h-screen dark:bg-[#222831]">
+          <Providers>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+              storageKey="portfolio-theme"
+            >
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </Providers>
+        </div>
       </body>
-
     </html>
   );
 }

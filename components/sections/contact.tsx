@@ -1,32 +1,81 @@
 'use client';
 import { useState } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
+import { FormData, SubmitStatus, initialFormData, initialSubmitStatus } from '@/types/contact';
+import { sanitizeInput, validateFormData } from '@/utils/form';
 
-interface FormData {
-    name: string;
-    email: string;
-    message: string;
+interface FormFieldProps {
+    id: string;
+    label: string;
+    type: 'text' | 'email' | 'textarea';
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    maxLength?: number;
+    autoComplete?: string;
+    rows?: number;
 }
 
-interface SubmitStatus {
-    success: boolean;
-    message: string;
-}
+function FormField({
+    id,
+    label,
+    type,
+    value,
+    onChange,
+    maxLength,
+    autoComplete,
+    rows
+}: FormFieldProps) {
+    const commonClasses = "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white";
 
-const initialFormData: FormData = {
-    name: '',
-    email: '',
-    message: '',
-};
-
-const initialSubmitStatus: SubmitStatus = {
-    success: false,
-    message: '',
-};
-
-function sanitizeInput(input: string): string {
-    return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            whileHover={{ scale: 1.02 }}
+        >
+            <motion.label
+                htmlFor={id}
+                className="block text-lg font-medium text-gray-900 dark:text-white"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                {label}
+            </motion.label>
+            {type === 'textarea' ? (
+                <motion.textarea
+                    id={id}
+                    value={value}
+                    onChange={onChange}
+                    className={commonClasses}
+                    placeholder={label}
+                    required
+                    maxLength={maxLength}
+                    rows={rows}
+                    whileFocus={{ scale: 1.01 }}
+                    transition={{ duration: 0.2 }}
+                />
+            ) : (
+                <motion.input
+                    type={type}
+                    id={id}
+                    value={value}
+                    onChange={onChange}
+                    className={commonClasses}
+                    placeholder={label}
+                    required
+                    maxLength={maxLength}
+                    autoComplete={autoComplete}
+                    whileFocus={{ scale: 1.01 }}
+                    transition={{ duration: 0.2 }}
+                />
+            )}
+        </motion.div>
+    );
 }
 
 function Contact() {
@@ -118,106 +167,149 @@ function Contact() {
         >
             <div className="flex flex-col lg:flex-row gap-12 lg:gap-24 w-full max-w-6xl">
                 {/* Left: Heading & Decorative */}
-                <div className="w-full lg:w-1/2 relative">
-                    <h2 className="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white text-left">
-                        Got a project in <span className="text-[#00ADB5]">mind?</span>
-                    </h2>
+                <motion.div
+                    className="w-full lg:w-1/2 relative"
+                    initial={{ opacity: 0, x: -100 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <motion.h2
+                        className="mb-8 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white text-left"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                        Got a project in <motion.span
+                            className="text-[#00ADB5]"
+                            animate={{
+                                scale: [1, 1.1, 1],
+                                color: ["#00ADB5", "#009fae", "#00ADB5"]
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                            }}
+                        >
+                            mind?
+                        </motion.span>
+                    </motion.h2>
                     <div className="flex items-start gap-8">
-                        <img
-                            src={arrow.src}
-                            alt="Decorative arrow"
-                            width={64}
-                            height={64}
-                            className="w-16 h-16 mt-4"
-                        />
-                        <img
-                            src={ladder.src}
-                            alt="Decorative ladder"
-                            width={256}
-                            height={256}
-                            className="w-64 h-64 object-contain"
-                        />
+                        <motion.div
+                            animate={{
+                                x: [0, 10, 0],
+                                rotate: [0, 15, 0]
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                            }}
+                        >
+                            <Image
+                                src={arrow}
+                                alt="Decorative arrow"
+                                width={64}
+                                height={64}
+                                className="w-16 h-16 mt-4"
+                                priority
+                            />
+                        </motion.div>
+                        <motion.div
+                            animate={{
+                                y: [0, -20, 0],
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                            }}
+                        >
+                            <Image
+                                src={ladder}
+                                alt="Decorative ladder"
+                                width={256}
+                                height={256}
+                                className="w-64 h-64 object-contain"
+                                priority
+                            />
+                        </motion.div>
                     </div>
-                </div>
+                </motion.div>
                 {/* Right: Contact Form */}
-                <div className="w-full lg:w-1/2">
+                <motion.div
+                    className="w-full lg:w-1/2"
+                    initial={{ opacity: 0, x: 100 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8 }}
+                >
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label
-                                htmlFor="name"
-                                className="block text-lg font-medium text-gray-900 dark:text-white"
-                            >
-                                Your name
-                            </label>
-                            <input
-                                type="text"
-                                id="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Name"
-                                required
-                                maxLength={100}
-                                autoComplete="name"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="block text-lg font-medium text-gray-900 dark:text-white"
-                            >
-                                Your email
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Email"
-                                required
-                                maxLength={100}
-                                autoComplete="email"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="message"
-                                className="block text-lg font-medium text-gray-900 dark:text-white"
-                            >
-                                Your message
-                            </label>
-                            <textarea
-                                id="message"
-                                rows={4}
-                                value={formData.message}
-                                onChange={handleChange}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                placeholder="Message"
-                                required
-                                maxLength={2000}
-                            />
-                        </div>
-                        {submitStatus.message && (
-                            <div
-                                className={`p-4 rounded-lg ${submitStatus.success
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-red-100 text-red-800'
-                                    }`}
-                            >
-                                {submitStatus.message}
-                            </div>
-                        )}
-                        <button
+                        <FormField
+                            id="name"
+                            label="Your name"
+                            type="text"
+                            value={formData.name}
+                            onChange={handleChange}
+                            maxLength={100}
+                            autoComplete="name"
+                        />
+                        <FormField
+                            id="email"
+                            label="Your email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            maxLength={100}
+                            autoComplete="email"
+                        />
+                        <FormField
+                            id="message"
+                            label="Your message"
+                            type="textarea"
+                            value={formData.message}
+                            onChange={handleChange}
+                            maxLength={2000}
+                            rows={4}
+                        />
+                        <AnimatePresence mode="wait">
+                            {submitStatus.message && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 20 }}
+                                    transition={{ duration: 0.3 }}
+                                    className={`p-4 rounded-lg ${submitStatus.success
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                        }`}
+                                >
+                                    {submitStatus.message}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                        <motion.button
                             type="submit"
                             disabled={isSubmitting}
                             className={`w-full px-6 py-3 bg-[#00ADB5] hover:bg-[#009fae] text-white font-bold rounded-lg shadow-md transition-colors duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
                                 }`}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ duration: 0.2 }}
                         >
-                            {isSubmitting ? 'Sending...' : 'Send Message'}
-                        </button>
+                            {isSubmitting ? (
+                                <motion.span
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    Sending...
+                                </motion.span>
+                            ) : (
+                                'Send Message'
+                            )}
+                        </motion.button>
                     </form>
-                </div>
+                </motion.div>
             </div>
         </section>
     );
