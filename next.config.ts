@@ -1,9 +1,36 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async headers() {
+    return [
+      {
+        source: "/assets/:path*",
+        headers: [
+          {
+            key: "Content-Disposition",
+            value: 'attachment; filename="MyCv.pdf"',
+          },
+        ],
+      },
+    ];
+  },
   images: {
-    domains: ["images.unsplash.com"], // Add the domain(s) you want to allow
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
+  // Suppress browser extension warnings in console
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
   },
 };
 
