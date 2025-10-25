@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
 import { FormData, SubmitStatus, initialFormData, initialSubmitStatus } from '@/types/contact';
-import { sanitizeInput, validateFormData } from '@/utils/form';
+import { sanitizeInput } from '@/utils/form';
 
 interface FormFieldProps {
     id: string;
@@ -279,8 +279,8 @@ function Contact() {
                                     exit={{ opacity: 0, y: 20 }}
                                     transition={{ duration: 0.3 }}
                                     className={`p-4 rounded-lg ${submitStatus.success
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800'
                                         }`}
                                 >
                                     {submitStatus.message}
