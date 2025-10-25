@@ -6,6 +6,7 @@ import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
 import { FormData, SubmitStatus, initialFormData, initialSubmitStatus } from '@/types/contact';
 import { sanitizeInput } from '@/utils/form';
+//remove validateFormData 
 
 interface FormFieldProps {
     id: string;
