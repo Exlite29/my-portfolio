@@ -19,9 +19,10 @@ export const FloatingNav = ({
     navItems: NavItem[];
     className?: string;
 }) => {
-    const isDesktop = useMediaQuery("(min-width: 1280px)");
+    const isDesktop = useMediaQuery("(min-width: 768px)");
     const [activeSection, setActiveSection] = useState("home");
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     // Handle scroll and active section
     useEffect(() => {
@@ -110,14 +111,14 @@ export const FloatingNav = ({
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                         setActiveSection("home");
                     }}
-                    className="hidden lg:flex text-center text-2xl font-bold cursor-pointer bg-gradient-to-r from-[#00ADB5] to-[#009fae] bg-clip-text text-transparent"
+                    className="flex text-center text-xl sm:text-2xl font-bold cursor-pointer bg-gradient-to-r from-[#00ADB5] to-[#009fae] bg-clip-text text-transparent"
                 >
                     Ariel A.
                 </motion.h3>
 
-                {isDesktop && (
-                    <div className={cn("px-4 py-2 rounded-full", className)}>
-                        <div className="flex items-center justify-center space-x-8">
+                <div className={cn("px-4 py-2 rounded-full", className)}>
+                    {isDesktop ? (
+                        <div className="flex items-center justify-center space-x-4 sm:space-x-8">
                             {navItems.map((navItem: NavItem, idx: number) => {
                                 const isActive = activeSection === navItem.link.replace("#", "");
                                 return (
@@ -147,10 +148,12 @@ export const FloatingNav = ({
                                                 }
                                             }}
                                         >
-                                            <div className="flex items-center space-x-1">
-                                                <span className="block sm:hidden">{navItem.icon}</span>
+                                            <div className="flex items-center space-x-2">
+                                                {navItem.icon && (
+                                                    <span className="text-lg sm:text-base">{navItem.icon}</span>
+                                                )}
                                                 <span className={cn(
-                                                    "hidden sm:block text-sm font-medium transition-colors duration-300",
+                                                    "text-sm font-medium transition-colors duration-300",
                                                     isActive
                                                         ? "text-[#00ADB5]"
                                                         : "text-gray-600 dark:text-gray-300 hover:text-[#00ADB5] dark:hover:text-[#00ADB5]"
@@ -171,8 +174,107 @@ export const FloatingNav = ({
                                 );
                             })}
                         </div>
-                    </div>
-                )}
+                    ) : (
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-6 w-6"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                {isMobileMenuOpen ? (
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M6 18L18 6M6 6l12 12"
+                                    />
+                                ) : (
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M4 6h16M4 12h16m-7 6h7"
+                                    />
+                                )}
+                            </svg>
+                        </motion.button>
+                    )}
+                </div>
+
+                {/* Mobile Menu */}
+                <AnimatePresence>
+                    {!isDesktop && isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-full left-0 right-0 bg-white dark:bg-gray-900 shadow-lg rounded-b-2xl mt-2 py-4 px-6"
+                        >
+                            <motion.div
+                                initial="hidden"
+                                animate="visible"
+                                variants={{
+                                    visible: { transition: { staggerChildren: 0.05 } }
+                                }}
+                                className="flex flex-col space-y-4"
+                            >
+                                {navItems.map((navItem: NavItem, idx: number) => {
+                                    const isActive = activeSection === navItem.link.replace("#", "");
+                                    return (
+                                        <motion.div
+                                            key={`mobile-nav-${idx}`}
+                                            variants={itemVariants}
+                                            custom={idx}
+                                        >
+                                            <Link
+                                                href={navItem.link}
+                                                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    const sectionId = navItem.link.replace("#", "");
+                                                    const element = document.getElementById(sectionId);
+
+                                                    if (element) {
+                                                        const elementPosition = element.getBoundingClientRect().top;
+                                                        const offsetPosition = elementPosition + window.pageYOffset - 80;
+
+                                                        window.scrollTo({
+                                                            top: offsetPosition,
+                                                            behavior: "smooth"
+                                                        });
+
+                                                        setActiveSection(sectionId);
+                                                        setIsMobileMenuOpen(false);
+                                                    }
+                                                }}
+                                            >
+                                                {navItem.icon && (
+                                                    <span className="text-xl">{navItem.icon}</span>
+                                                )}
+                                                <span className={cn(
+                                                    "font-medium",
+                                                    isActive
+                                                        ? "text-[#00ADB5]"
+                                                        : "text-gray-600 dark:text-gray-300"
+                                                )}>
+                                                    {navItem.name}
+                                                </span>
+                                            </Link>
+                                        </motion.div>
+                                    );
+                                })}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </motion.div>
         </AnimatePresence>
     );

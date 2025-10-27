@@ -26,45 +26,67 @@ function Hero() {
     };
 
     return (
-        <section id="home" className="relative overflow-hidden">
-            <div className="flex items-center justify-center h-screen w-full px-4 sm:px-8">
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 justify-between items-center w-full max-w-6xl mx-auto">
+        <section id="home" className="relative overflow-hidden min-h-screen">
+            <div className="flex items-center justify-center min-h-screen w-full px-4 sm:px-8 py-20 sm:py-0">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-20 justify-between items-center w-full max-w-6xl mx-auto relative">
                     {/* Left side - Text content */}
                     <motion.div
                         initial={{ x: -100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 0.8 }}
-                        className="flex gap-2 mt-16 relative z-10"
+                        transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                        className="flex gap-2 relative z-10 w-full lg:w-auto"
                     >
                         <motion.div
-                            whileHover={{ rotate: 10 }}
-                            transition={{ type: 'spring', stiffness: 300 }}
+                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                            transition={{ type: 'spring', stiffness: 300, duration: 1 }}
+                            className="relative"
                         >
-                            <img
-                                className="w-20 mt-14 md:h-48 lg:h-92 sm:h-40"
+                            <motion.img
+                                className="w-16 sm:w-20 mt-14 md:h-48 lg:h-92 sm:h-40"
                                 src={curlyarrow.src}
                                 alt="decorative arrow"
+                                animate={{
+                                    x: [0, -5, 5, 0],
+                                    rotate: [0, -5, 5, 0]
+                                }}
+                                transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
                             />
                         </motion.div>
 
-                        <div>
-                            <motion.h1
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.2, duration: 0.8 }}
-                                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold"
+                        <div className="relative">
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{
+                                    duration: 0.8,
+                                    type: "spring",
+                                    stiffness: 100
+                                }}
                             >
-                                Jr. Front End
-                            </motion.h1>
+                                <motion.h1
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.2, duration: 0.8 }}
+                                    className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold bg-clip-text"
+                                    whileHover={{ scale: 1.05 }}
+                                >
+                                    Jr. Front End
+                                </motion.h1>
 
-                            <motion.h1
-                                initial={{ y: 20, opacity: 0 }}
-                                animate={{ y: 0, opacity: 1 }}
-                                transition={{ delay: 0.4, duration: 0.8 }}
-                                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-[#00ADB5] font-bold"
-                            >
-                                Developer
-                            </motion.h1>
+                                <motion.h1
+                                    initial={{ y: 20, opacity: 0 }}
+                                    animate={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.4, duration: 0.8 }}
+                                    className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#00ADB5] bg-clip-text"
+                                    whileHover={{ scale: 1.05 }}
+                                >
+                                    Developer
+                                </motion.h1>
+                            </motion.div>
 
                             <motion.div
                                 initial={{ y: 20, opacity: 0 }}
@@ -96,57 +118,87 @@ function Hero() {
                     <motion.div
                         initial={{ x: 100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: 0.4, duration: 0.8 }}
+                        transition={{
+                            delay: 0.4,
+                            duration: 0.8,
+                            type: "spring",
+                            stiffness: 100
+                        }}
                         className="relative hidden lg:block"
                     >
                         <motion.img
                             animate={{
                                 y: [0, -15, 0],
+                                rotate: [0, 2, -2, 0],
                             }}
                             transition={{
-                                duration: 4,
+                                duration: 6,
                                 repeat: Infinity,
                                 ease: "easeInOut",
                             }}
-                            className="absolute top-0 left-0 z-0 w-full opacity-70"
+                            className="absolute top-0 left-0 z-0 w-full opacity-70 blur-[1px]"
                             src={doodle.src}
                             alt="background doodle"
                         />
 
-                        <motion.img
-                            whileHover={{ scale: 1.03 }}
-                            className="h-86 w-86 relative mt-40 mr-40 z-10 transition-all duration-300"
-                            src={sitting.src}
-                            alt="Profile illustration"
-                        />
+                        <motion.div
+                            className="relative"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{
+                                type: "spring",
+                                stiffness: 200,
+                                damping: 10
+                            }}
+                        >
+                            <motion.img
+                                animate={{
+                                    y: [0, -10, 0],
+                                    rotate: [0, 1, -1, 0],
+                                }}
+                                transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut",
+                                }}
+                                className="h-86 w-86 relative mt-40 mr-40 z-10 transition-all duration-300 drop-shadow-2xl"
+                                src={sitting.src}
+                                alt="Profile illustration"
+                            />
+                        </motion.div>
                     </motion.div>
                 </div>
             </div>
 
             {/* Floating particles */}
-            {[...Array(15)].map((_, i) => (
+            {[...Array(20)].map((_, i) => (
                 <motion.div
                     key={i}
                     initial={{
                         y: Math.random() * 100 - 50,
                         x: Math.random() * 100 - 50,
+                        scale: 0,
                         opacity: 0,
                     }}
                     animate={{
-                        y: [0, Math.random() * 100 - 50],
-                        x: [0, Math.random() * 100 - 50],
-                        opacity: [0, 0.5, 0],
+                        y: [0, Math.random() * 150 - 75],
+                        x: [0, Math.random() * 150 - 75],
+                        scale: [0, 1, 0],
+                        opacity: [0, 0.8, 0],
                     }}
                     transition={{
-                        duration: Math.random() * 10 + 10,
+                        duration: Math.random() * 8 + 8,
                         repeat: Infinity,
                         repeatType: "reverse",
                         delay: Math.random() * 5,
+                        ease: "easeInOut"
                     }}
-                    className="absolute rounded-full bg-[#00ADB5] w-2 h-2"
+                    className="absolute rounded-full bg-gradient-to-r from-[#00ADB5] to-[#008891]"
                     style={{
                         top: `${Math.random() * 100}%`,
                         left: `${Math.random() * 100}%`,
+                        width: `${Math.random() * 8 + 4}px`,
+                        height: `${Math.random() * 8 + 4}px`,
+                        filter: 'blur(1px)'
                     }}
                 />
             ))}
