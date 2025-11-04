@@ -19,3 +19,5 @@ export const initialSubmitStatus: SubmitStatus = {
   success: false,
   message: "",
 };
+
+export const Contacts = process.env.Contact || "";
