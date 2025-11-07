@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { skillsData } from '@/data/skillsData';
 
-type SkillCategory = 'all' | 'frontend' | 'tools' | 'design';
+type SkillCategory = 'all' | 'frontend' | 'backend' | 'tools' | 'design';
 
 function Skills() {
     const [activeCategory, setActiveCategory] = useState<SkillCategory>('all');
 
-    const categories: SkillCategory[] = ['all', 'frontend', 'tools', 'design'];
+    const categories: SkillCategory[] = ['all', 'frontend', 'backend', 'tools', 'design'];
 
     const filteredSkills = activeCategory === 'all'
         ? skillsData

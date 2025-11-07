@@ -6,6 +6,10 @@ import ladder from '../../assets/ladder.png';
 import arrow from '../../assets/curlyarrow.png';
 import { FormData, SubmitStatus, initialFormData, initialSubmitStatus } from '@/types/contact';
 import { sanitizeInput } from '@/utils/form';
+import axios from 'axios';
+import { contactAPI } from '@/types/contact';
+
+
 
 interface FormFieldProps {
     id: string;
@@ -93,13 +97,80 @@ function Contact() {
         }));
     };
 
+    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    //     e.preventDefault();
+    //     setIsSubmitting(true);
+    //     setSubmitStatus(initialSubmitStatus);
+
+    //     try {
+    //         // Validation
+    //         if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+    //             throw new Error('All fields are required');
+    //         }
+    //         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    //             throw new Error('Please enter a valid email address');
+    //         }
+
+    //         // Sanitize
+    //         const sanitizedData = {
+    //             name: sanitizeInput(formData.name),
+    //             email: sanitizeInput(formData.email),
+    //             message: sanitizeInput(formData.message),
+    //         };
+
+    //         const response = await fetch('/api/contact', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({
+    //                 name: sanitizedData.name,
+    //                 email: sanitizedData.email,
+    //                 message: sanitizedData.message
+    //             }),
+    //         });
+
+    //         const text = await response.text();
+    //         let data;
+
+    //         try {
+    //             data = JSON.parse(text);
+    //         } catch {
+    //             console.error('Failed to parse response:', text);
+    //             throw new Error('Server returned invalid JSON');
+    //         }
+
+    //         if (!response.ok) {
+    //             throw new Error(data.message || 'Failed to send message');
+    //         }
+
+    //         setSubmitStatus({
+    //             success: true,
+    //             message: data.message || 'Message sent successfully!'
+    //         });
+    //         setFormData(initialFormData);
+    //     } catch (error: unknown) {
+    //         console.error('Submission error:', error);
+    //         let errorMessage = 'Failed to send message. Please try again later.';
+    //         if (error instanceof Error) {
+    //             errorMessage = error.message;
+    //         }
+    //         setSubmitStatus({
+    //             success: false,
+    //             message: errorMessage,
+    //         });
+    //     } finally {
+    //         setIsSubmitting(false);
+    //     }
+    // };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsSubmitting(true);
         setSubmitStatus(initialSubmitStatus);
 
         try {
-            // Validation
+            // Validation (keep your existing validation)
             if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
                 throw new Error('All fields are required');
             }
@@ -107,50 +178,46 @@ function Contact() {
                 throw new Error('Please enter a valid email address');
             }
 
-            // Sanitize
+            // Sanitize (keep your existing sanitization)
             const sanitizedData = {
                 name: sanitizeInput(formData.name),
                 email: sanitizeInput(formData.email),
                 message: sanitizeInput(formData.message),
             };
 
-            const response = await fetch('/api/contact', {
-                method: 'POST',
+            // ✅ CHANGE ONLY THIS PART - Replace fetch with Axios
+            const response = await axios.post(contactAPI ?? '/api/contact', {
+                name: sanitizedData.name,
+                email: sanitizedData.email,
+                message: sanitizedData.message
+            }, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: sanitizedData.name,
-                    email: sanitizedData.email,
-                    message: sanitizedData.message
-                }),
             });
 
-            const text = await response.text();
-            let data;
-
-            try {
-                data = JSON.parse(text);
-            } catch {
-                console.error('Failed to parse response:', text);
-                throw new Error('Server returned invalid JSON');
+            // ✅ SIMPLER RESPONSE HANDLING - No need for response.text() or JSON.parse()
+            if (response.status >= 200 && response.status < 300) {
+                setSubmitStatus({
+                    success: true,
+                    message: response.data.message || 'Message sent successfully!'
+                });
+                setFormData(initialFormData);
+            } else {
+                throw new Error(response.data.message || 'Failed to send message');
             }
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to send message');
-            }
-
-            setSubmitStatus({
-                success: true,
-                message: data.message || 'Message sent successfully!'
-            });
-            setFormData(initialFormData);
         } catch (error: unknown) {
             console.error('Submission error:', error);
             let errorMessage = 'Failed to send message. Please try again later.';
-            if (error instanceof Error) {
+
+            if (axios.isAxiosError(error)) {
+                // Axios-specific error handling
+                errorMessage = error.response?.data?.message || error.message || 'Network error';
+            } else if (error instanceof Error) {
                 errorMessage = error.message;
             }
+
             setSubmitStatus({
                 success: false,
                 message: errorMessage,

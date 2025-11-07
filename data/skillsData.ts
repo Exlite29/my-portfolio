@@ -10,6 +10,7 @@ import {
   FaCode,
 } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
+import { SiRender } from "react-icons/si";
 import {
   SiTypescript,
   SiTailwindcss,
@@ -23,7 +24,7 @@ export interface Skill {
   name: string;
   icon: IconType;
   color: string;
-  category: "frontend" | "tools" | "design";
+  category: "frontend" | "backend" | "tools" | "design";
   level: "Beginner" | "Intermediate" | "Advanced";
 }
 
@@ -132,5 +133,12 @@ export const skillsData: Skill[] = [
     color: "#E10098",
     category: "frontend",
     level: "Advanced",
+  },
+  {
+    name: "Render",
+    icon: SiRender,
+    color: "#000000",
+    category: "backend",
+    level: "Intermediate",
   },
 ];

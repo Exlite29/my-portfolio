@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export interface FormData {
   name: string;
   email: string;
@@ -20,4 +22,13 @@ export const initialSubmitStatus: SubmitStatus = {
   message: "",
 };
 
-export const Contacts = process.env.Contact || "";
+export const contactAPI = process.env.API_CONTACTS;
+export const contactService = {
+  // POST - Send contact form data
+  sendMessage: (contactData: any) =>
+    axios.post(`${contactAPI}/contact`, contactData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }),
+};
