@@ -1,5 +1,5 @@
 "use client";
-
+//@ts-check
 import { GlobalProvider } from "./GlobalProvider";
 
 type Props = {
