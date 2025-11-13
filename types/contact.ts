@@ -23,12 +23,3 @@ export const initialSubmitStatus: SubmitStatus = {
 };
 
 export const contactAPI = process.env.API_CONTACTS;
-export const contactService = {
-  // POST - Send contact form data
-  sendMessage: (contactData: any) =>
-    axios.post(`${contactAPI}/contact`, contactData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }),
-};
