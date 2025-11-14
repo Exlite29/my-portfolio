@@ -1,19 +1,21 @@
 'use client'
-import React from 'react';
+import React, { useCallback } from 'react';
 import doodle from '../../assets/d-round.png';
 import sitting from '../../assets/sitting.png';
 import curlyarrow from '../../assets/curlyarrow.png';
 import { Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 
 function Hero() {
-    const handleDownloadCv = async () => {
+    const handleDownloadCv = useCallback(async () => {
         try {
             const link = document.createElement('a');
             link.href = 'https://drive.google.com/file/d/1lSWc8eXevyFq_A30JjZLLBSsGNMugChH/view';
             link.download = 'MyCv.pdf';
             link.target = '_blank';
+            link.rel = 'noopener noreferrer';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -23,7 +25,7 @@ function Hero() {
             console.error('Download failed:', error);
             toast.error('Failed to download CV. Please try again.');
         }
-    };
+    }, []);
 
     return (
         <section id="home" className="relative overflow-hidden min-h-screen">
@@ -170,7 +172,7 @@ function Hero() {
             </div>
 
             {/* Floating particles */}
-            {[...Array(20)].map((_, i) => (
+            {[...Array(12)].map((_, i) => (
                 <motion.div
                     key={i}
                     initial={{
@@ -198,7 +200,8 @@ function Hero() {
                         left: `${Math.random() * 100}%`,
                         width: `${Math.random() * 8 + 4}px`,
                         height: `${Math.random() * 8 + 4}px`,
-                        filter: 'blur(1px)'
+                        filter: 'blur(1px)',
+                        willChange: 'transform'
                     }}
                 />
             ))}

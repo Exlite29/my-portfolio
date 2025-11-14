@@ -8,9 +8,18 @@ import {
   FaNpm,
   FaFigma,
   FaCode,
+  FaNodeJs,
+  FaPython,
+  FaDocker,
 } from "react-icons/fa";
 import { GrGraphQl } from "react-icons/gr";
-import { SiRender } from "react-icons/si";
+import {
+  SiRender,
+  SiMongodb,
+  SiPostgresql,
+  SiExpress,
+  SiPrisma,
+} from "react-icons/si";
 import {
   SiTypescript,
   SiTailwindcss,
@@ -135,10 +144,59 @@ export const skillsData: Skill[] = [
     level: "Advanced",
   },
   {
-    name: "Render",
-    icon: SiRender,
+    name: "Node.js",
+    icon: FaNodeJs,
+    color: "#339933",
+    category: "backend",
+    level: "Intermediate",
+  },
+  {
+    name: "Express.js",
+    icon: SiExpress,
     color: "#000000",
     category: "backend",
+    level: "Intermediate",
+  },
+  {
+    name: "MongoDB",
+    icon: SiMongodb,
+    color: "#13AA52",
+    category: "backend",
+    level: "Intermediate",
+  },
+  {
+    name: "PostgreSQL",
+    icon: SiPostgresql,
+    color: "#336791",
+    category: "backend",
+    level: "Intermediate",
+  },
+  {
+    name: "Prisma ORM",
+    icon: SiPrisma,
+    color: "#2D3748",
+    category: "backend",
+    level: "Intermediate",
+  },
+  {
+    name: "Docker",
+    icon: FaDocker,
+    color: "#2496ED",
+    category: "tools",
+    level: "Beginner",
+  },
+  {
+    name: "Python",
+    icon: FaPython,
+    color: "#3776AB",
+    category: "backend",
+    level: "Beginner",
+  },
+  {
+    name: "Render",
+    icon: SiRender,
+    color: "#46E3B7",
+    category: "tools",
     level: "Intermediate",
   },
 ];

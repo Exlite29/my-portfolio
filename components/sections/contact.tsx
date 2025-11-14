@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import ladder from '../../assets/ladder.png';
@@ -32,26 +32,23 @@ function FormField({
     autoComplete,
     rows
 }: FormFieldProps) {
-    const commonClasses = "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white";
+    const commonClasses = "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-[#00ADB5] focus:border-[#00ADB5] dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white transition-all duration-200";
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            whileHover={{ scale: 1.02 }}
+            viewport={{ once: true }}
         >
-            <motion.label
+            <label
                 htmlFor={id}
-                className="block text-lg font-medium text-gray-900 dark:text-white"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
+                className="block text-lg font-medium text-gray-900 dark:text-white mb-2"
             >
                 {label}
-            </motion.label>
+            </label>
             {type === 'textarea' ? (
-                <motion.textarea
+                <textarea
                     id={id}
                     value={value}
                     onChange={onChange}
@@ -60,11 +57,9 @@ function FormField({
                     required
                     maxLength={maxLength}
                     rows={rows}
-                    whileFocus={{ scale: 1.01 }}
-                    transition={{ duration: 0.2 }}
                 />
             ) : (
-                <motion.input
+                <input
                     type={type}
                     id={id}
                     value={value}
@@ -74,13 +69,13 @@ function FormField({
                     required
                     maxLength={maxLength}
                     autoComplete={autoComplete}
-                    whileFocus={{ scale: 1.01 }}
-                    transition={{ duration: 0.2 }}
                 />
             )}
         </motion.div>
     );
 }
+
+const MemoizedFormField = memo(FormField);
 
 function Contact() {
     const [formData, setFormData] = useState<FormData>(initialFormData);
@@ -244,7 +239,7 @@ function Contact() {
                     transition={{ duration: 0.8 }}
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <FormField
+                        <MemoizedFormField
                             id="name"
                             label="Your name"
                             type="text"
@@ -253,7 +248,7 @@ function Contact() {
                             maxLength={100}
                             autoComplete="name"
                         />
-                        <FormField
+                        <MemoizedFormField
                             id="email"
                             label="Your email"
                             type="email"
@@ -262,7 +257,7 @@ function Contact() {
                             maxLength={100}
                             autoComplete="email"
                         />
-                        <FormField
+                        <MemoizedFormField
                             id="message"
                             label="Your message"
                             type="textarea"
