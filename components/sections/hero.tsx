@@ -6,7 +6,6 @@ import curlyarrow from '../../assets/curlyarrow.png';
 import { Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import Link from 'next/link';
 
 function Hero() {
     const handleDownloadCv = useCallback(async () => {
