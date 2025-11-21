@@ -45,7 +45,7 @@ export const projects = [
         image: dujas.src,
         link: "https://dujascleaning.com/",
         github: "https://github.com/Exlite29",
-        technologies: ["Next.js", "React", "Tailwind CSS", "Node.js"]
+        technologies: ["Wordpress", "Elementor"]
     },
     {
         id: "nextmba",
