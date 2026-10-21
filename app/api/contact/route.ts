@@ -16,7 +16,9 @@ export async function POST(req: NextRequest) {
     // Email setup (Yahoo SMTP)
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
+      // Defensive default: Number(undefined) is NaN, which throws deep in
+      // nodemailer when SMTP env vars are missing.
+      port: Number(process.env.SMTP_PORT ?? 587),
       secure: true,
       auth: {
         user: process.env.SMTP_USER,

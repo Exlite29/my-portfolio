@@ -21,10 +21,16 @@ export const socialLinks: SocialLink[] = [
         icon: FaLinkedin,
         label: 'LinkedIn'
     },
-    {
-        id: 'email',
-        href: `mailto:${process.env.NEXT_PUBLIC_EMAIL}`,
-        icon: FaEnvelope,
-        label: 'Email'
-    }
+    // Only render the mail link when the address exists, otherwise the
+    // href would become "mailto:undefined" (bug surfacing in footer + chat).
+    ...(process.env.NEXT_PUBLIC_EMAIL
+        ? [
+              {
+                  id: 'email',
+                  href: `mailto:${process.env.NEXT_PUBLIC_EMAIL}`,
+                  icon: FaEnvelope,
+                  label: 'Email'
+              } satisfies SocialLink
+          ]
+        : [])
 ];

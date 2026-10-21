@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { activateScene, deactivateScene, setChatOpen, useActiveSceneId } from "@/lib/scene-store";
+import { suppressScrollUntilScrollEnd } from "@/hooks/use-scene-sync";
 import Link from "next/link";
 import { useMediaQuery } from "usehooks-ts";
 
@@ -19,55 +21,32 @@ export const FloatingNav = ({
     navItems: NavItem[];
     className?: string;
 }) => {
-    const isDesktop = useMediaQuery("(min-width: 768px)");
-    const [activeSection, setActiveSection] = useState("home");
+    // initializeWithValue: false — reading matchMedia synchronously during the
+    // first client render SSRs the mobile tree (isDesktop=false) while desktop
+    // clients render the desktop tree -> hydration mismatch. The hook now
+    // starts false (matching SSR) and syncs after mount.
+    const isDesktop = useMediaQuery("(min-width: 768px)", { initializeWithValue: false });
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // Handle scroll and active section
+    // Navbar background only — the active item is derived from the 3D scene
+    // store below (single source of truth shared with the camera; no second
+    // scroll-spy running layout on every scroll event).
     useEffect(() => {
-        const handleScroll = () => {
-            // Update navbar background based on scroll
-            setIsScrolled(window.scrollY > 20);
+        const handleScroll = () => setIsScrolled(window.scrollY > 20);
+        handleScroll();
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
-            // Update active section based on scroll position
-            const sections = navItems.map(item => item.link.replace("#", ""));
-
-            // Find the section that is currently in view
-            const viewportHeight = window.innerHeight;
-            const scrollPosition = window.scrollY;
-
-            const current = sections.reduce((nearest, section) => {
-                const element = document.getElementById(section);
-                if (element) {
-                    const rect = element.getBoundingClientRect();
-                    const offset = rect.top + scrollPosition;
-                    const distance = Math.abs(scrollPosition - offset + viewportHeight * 0.3);
-
-                    return nearest.distance > distance
-                        ? { section, distance }
-                        : nearest;
-                }
-                return nearest;
-            }, { section: sections[0], distance: Infinity }).section;
-
-            if (current) {
-                setActiveSection(current);
-            }
-        };
-
-        const throttledScroll = () => {
-            if (!window.requestAnimationFrame) {
-                setTimeout(handleScroll, 66);
-            } else {
-                requestAnimationFrame(handleScroll);
-            }
-        };
-
-        window.addEventListener("scroll", throttledScroll);
-        handleScroll(); // Initial check
-        return () => window.removeEventListener("scroll", throttledScroll);
-    }, [navItems]);
+    // Nav highlight mirrors the camera: overview = Home, project:* anchors
+    // = Projects, section ids = their nav item, contact = Contact.
+    const activeSceneId = useActiveSceneId();
+    const activeSection = !activeSceneId
+        ? "home"
+        : activeSceneId.startsWith("project:")
+          ? "projects"
+          : activeSceneId;
 
     const navVariants = {
         hidden: { y: -100, opacity: 0 },
@@ -109,7 +88,8 @@ export const FloatingNav = ({
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                        setActiveSection("home");
+                        suppressScrollUntilScrollEnd();
+                        deactivateScene("dom");
                     }}
                     className="flex text-center text-xl sm:text-2xl font-bold cursor-pointer bg-gradient-to-r from-[#00ADB5] to-[#009fae] bg-clip-text text-transparent"
                 >
@@ -135,6 +115,13 @@ export const FloatingNav = ({
                                                 const sectionId = navItem.link.replace("#", "");
                                                 const element = document.getElementById(sectionId);
 
+                                                // Contact now lives in the chat launcher,
+                                                // not an in-page section.
+                                                if (sectionId === "contact" && !element) {
+                                                    setChatOpen(true, "dom");
+                                                    return;
+                                                }
+
                                                 if (element) {
                                                     const elementPosition = element.getBoundingClientRect().top;
                                                     const offsetPosition = elementPosition + window.pageYOffset - 80;
@@ -143,8 +130,20 @@ export const FloatingNav = ({
                                                         top: offsetPosition,
                                                         behavior: "smooth"
                                                     });
+                                                }
 
-                                                    setActiveSection(sectionId);
+                                                // Drive nav + 3D camera from the same store.
+                                                // The scroll observers are suppressed until the
+                                                // smooth scroll settles so intermediate sections
+                                                // don't blink the camera.
+                                                suppressScrollUntilScrollEnd();
+                                                if (sectionId === "home") {
+                                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                                    deactivateScene("dom");
+                                                } else if (sectionId === "about" || sectionId === "skills") {
+                                                    activateScene(sectionId, "dom");
+                                                } else if (sectionId === "projects") {
+                                                    activateScene("project:dujas", "dom");
                                                 }
                                             }}
                                         >
@@ -242,6 +241,13 @@ export const FloatingNav = ({
                                                     const sectionId = navItem.link.replace("#", "");
                                                     const element = document.getElementById(sectionId);
 
+                                                    // Contact now lives in the chat launcher.
+                                                    if (sectionId === "contact" && !element) {
+                                                        setChatOpen(true, "dom");
+                                                        setIsMobileMenuOpen(false);
+                                                        return;
+                                                    }
+
                                                     if (element) {
                                                         const elementPosition = element.getBoundingClientRect().top;
                                                         const offsetPosition = elementPosition + window.pageYOffset - 80;
@@ -250,10 +256,20 @@ export const FloatingNav = ({
                                                             top: offsetPosition,
                                                             behavior: "smooth"
                                                         });
-
-                                                        setActiveSection(sectionId);
-                                                        setIsMobileMenuOpen(false);
                                                     }
+
+                                                    // Same store-driven nav/camera sync as desktop.
+                                                    suppressScrollUntilScrollEnd();
+                                                    if (sectionId === "home") {
+                                                        window.scrollTo({ top: 0, behavior: "smooth" });
+                                                        deactivateScene("dom");
+                                                    } else if (sectionId === "about" || sectionId === "skills") {
+                                                        activateScene(sectionId, "dom");
+                                                    } else if (sectionId === "projects") {
+                                                        activateScene("project:dujas", "dom");
+                                                    }
+
+                                                    setIsMobileMenuOpen(false);
                                                 }}
                                             >
                                                 {navItem.icon && (

@@ -1,5 +1,27 @@
 # Performance Optimization Summary
 
+## 3D Workspace (October 2026)
+
+Hybrid split-screen R3F layout added (`components/portfolio/**`, `components/three/**`,
+`lib/scene-config.ts`, `lib/scene-store.ts`, `hooks/use-scene-sync.ts`).
+
+- **Bundle**: `three` + `@react-three/fiber` + `@react-three/drei` are dynamically
+  imported (`next/dynamic`, `ssr: false`) and only fetched when the scene panel is
+  within 256px of the viewport; the homepage shell stayed ~102 kB.
+- **Frameloop gating**: the canvas RAF loop fully stops (frameloop="never") when the
+  panel is offscreen OR the tab is hidden.
+- **Zero re-render animation**: camera transitions use framer-motion's imperative
+  `animate()` writing into refs; `useFrame` only applies the pose while dirty.
+  Store changes never re-render canvas internals.
+- **State sync**: dependency-free external store + `useSyncExternalStore` per field;
+  IntersectionObserver scroll-sync is suppressed during programmatic scrolls
+  (released on `scrollend` with timeout fallback) to avoid camera/scroll fights.
+- **Reduced motion**: camera jump-cuts and skeleton hints honor
+  `prefers-reduced-motion`; screen-reader focus changes announced via a live region.
+- **GLTF path**: `SceneAnchor.kind` objects in `SceneObjects.tsx` can be replaced by
+  `useGLTF` nodes keyed to the same ids without touching the DOM layer.
+
+
 ## Optimizations Applied
 
 ### 1. **Removed Unused Dependencies**
@@ -133,3 +155,41 @@ To verify improvements:
 3. Add dynamic imports for lazy-loaded sections
 4. Optimize image sizes and formats
 5. Test on mobile devices for performance
+---
+
+# 3D Hybrid Workspace (v2) — Performance Notes
+
+## Architecture
+
+Split-screen homepage (`components/portfolio/HybridWorkspace.tsx`):
+- Sticky R3F canvas half + scrolling resume half, synced ONLY through
+  `lib/scene-store.ts` (framework-agnostic external store, `useSyncExternalStore`
+  per-field subscriptions — no context, no zustand).
+- `lib/scene-config.ts` is the single source of truth: anchor ids, camera poses,
+  accent colors, DOM anchors (`resume-<id>`).
+
+## Key decisions
+
+| Technique | Where | Why |
+|---|---|---|
+| Framework-external store | `lib/scene-store.ts` | Camera rig reads state imperatively -> focus changes cause ZERO React re-renders in the canvas |
+| `next/dynamic` + `ssr:false` + `IntersectionObserver` trigger | `components/portfolio/ScenePanel.tsx` | three.js (~150 KB gz) never touches LCP; fetched only when the panel nears viewport |
+| Frameloop gate `always`/`never` | `WorkspaceCanvas.tsx` | RAF stops fully when tab hidden or panel offscreen (not just skipped frames) |
+| `dpr [1, 1.75]`, no shadow maps, 4 lights total | `WorkspaceCanvas` / `ProceduralRoom` | deterministic GPU budget on integrated graphics |
+| Emissive highlight instead of light changes | `SceneObjects.tsx` | hover/focus states are single material writes, no re-mounts |
+| `scrollend`-based sync suppression | `lib/scene-store.ts` + `use-scene-sync.ts` | intermediate-section observers cannot re-focus during programmatic smooth scrolls |
+| Source-tagged activation (`dom` vs `3d`) | scene store | prevents DOM <-> 3D feedback loops (click loop, scroll loop) |
+| Reduced-motion honored everywhere | CameraRig, `useSceneFocus`, `SceneScrollBridge` | instant jumps instead of tweens; `behavior: "auto"` scrolling |
+
+## Interaction model
+
+- DOM click -> `activateScene(id, "dom")` -> camera tween (text stays put).
+- 3D object click -> `activateScene(id, "3d")` -> `SceneScrollBridge` scrolls resume to `resume-<id>`.
+- Page scroll -> `useSceneSectionObserver` -> camera follows reading position.
+- `Esc` / click empty room space -> release selection; camera returns to overview.
+
+## Bundle impact (measured)
+
+- First Load JS of `/` is UNCHANGED conceptually: 204 kB (Three/R3F live in an
+  async chunk, loaded on demand only).
+- New pin set (do not upgrade piecemeal): `three@0.186.1`, `@react-three/fiber@9.8.2`, `@react-three/drei@10.7.9`, `@types/three@0.186.0` — React 19 peer ranges align.

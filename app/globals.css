@@ -128,3 +128,14 @@
 html {
   @apply scroll-smooth;
 }
+
+/* Contact launcher: subtle attention nudge (CSS-only, no JS animation loop) */
+@theme inline {
+  --animate-nudge: nudge 6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%, 88%, 100% { transform: translateY(0) scale(1); }
+  92% { transform: translateY(-3px) scale(1.06); }
+  96% { transform: translateY(0) scale(0.99); }
+}
