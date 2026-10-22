@@ -1,11 +1,5 @@
 
 import { HomeIcon, UserIcon, FolderIcon, MailIcon, CodeIcon } from "lucide-react";
-import dujas from '../public/dujas.png';
-import nextmba from '../public/nextmba.png';
-import oms from '../public/oms.png';
-import revscout from '../public/revscoutadmin.png'
-
-export const emailApi = process.env.NEXT_PUBLIC_EMAIL || '';
 
 export const navItems = [
     {
@@ -42,7 +36,6 @@ export const projects = [
         title: "Dujas Cleaning Ltd",
         description: "An online cleaning service booking platform with scheduling and payment features",
         category: "web",
-        image: dujas.src,
         link: "https://dujascleaning.com/",
         github: "https://github.com/Exlite29",
         technologies: ["Wordpress", "Elementor"]
@@ -52,7 +45,6 @@ export const projects = [
         title: "NextMBA",
         description: "NEXT MBA is a global online education platform that offers practical and professional knowledge in leadership, digital marketing, and technology-related fields.",
         category: "mobile",
-        image: nextmba.src,
         link: "https://admin.nextmba.com/",
         github: "https://github.com/Exlite29",
         technologies: ["React", "TypeScript", "Node.js", "MongoDB"]
@@ -62,7 +54,6 @@ export const projects = [
         title: "OMS G-Rocket",
         description: "Minimalist portfolio design for creative professionals",
         category: "web",
-        image: oms.src,
         link: "https://g-rocket.me/",
         github: "https://github.com/Exlite29",
         technologies: ["React", "Next.js", "Tailwind CSS"]
@@ -72,7 +63,6 @@ export const projects = [
         title: "RevScout",
         description: "Augmented reality navigation prototype",
         category: "other",
-        image: revscout.src,
         link: "https://revscout.io/",
         github: "https://github.com/Exlite29",
         technologies: ["React", "Node.js", "MongoDB", "Express"]

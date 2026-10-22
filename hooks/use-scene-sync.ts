@@ -17,7 +17,6 @@ import { useCallback, useEffect } from "react";
 import {
   activateScene,
   clearScrollSyncSuppression,
-  deactivateScene,
   getSceneState,
   isScrollSyncSuppressed,
   setChatOpen,
@@ -148,22 +147,3 @@ export function useSceneSectionObserver(ref: React.RefObject<HTMLElement | null>
   }, [ref, id, activeId]);
 }
 
-/** Clear focus when the panel scrolls fully back to the neutral overview. */
-export function useSceneResetObserver(ref: React.RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isScrollSyncSuppressed()) {
-          deactivateScene("dom");
-        }
-      },
-      { threshold: 0.35 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [ref]);
-}

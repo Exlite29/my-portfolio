@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export interface FormData {
   name: string;
   email: string;
@@ -22,4 +20,6 @@ export const initialSubmitStatus: SubmitStatus = {
   message: "",
 };
 
-export const contactAPI = process.env.API_CONTACTS;
+/** Which API the chat panel posts to. Relative → same origin by default. */
+export const CONTACT_ENDPOINT =
+  process.env.NEXT_PUBLIC_CONTACT_API ?? "/api/contact";

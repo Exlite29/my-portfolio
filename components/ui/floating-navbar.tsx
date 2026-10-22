@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { activateScene, deactivateScene, setChatOpen, useActiveSceneId } from "@/lib/scene-store";
@@ -48,6 +48,44 @@ export const FloatingNav = ({
           ? "projects"
           : activeSceneId;
 
+    /**
+     * Shared nav behavior for desktop links, mobile menu items and the brand.
+     * Desktop/mobile copies of this logic used to drift apart; now they can't.
+     */
+    const goToSection = useCallback((link: string, closeMenu = false) => {
+        const sectionId = link.replace("#", "");
+        const element = document.getElementById(sectionId);
+
+        // Contact now lives in the chat launcher, not an in-page section.
+        if (sectionId === "contact" && !element) {
+            setChatOpen(true, "dom");
+            if (closeMenu) setIsMobileMenuOpen(false);
+            return;
+        }
+
+        // Scroll under the floating nav.
+        if (element) {
+            const offsetPosition =
+                element.getBoundingClientRect().top + window.scrollY - 80;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        }
+
+        // Drive nav + 3D camera from the same store. The scroll observers are
+        // suppressed until the smooth scroll settles so intermediate sections
+        // don't blink the camera.
+        suppressScrollUntilScrollEnd();
+        if (sectionId === "home") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+            deactivateScene("dom");
+        } else if (sectionId === "about" || sectionId === "skills") {
+            activateScene(sectionId, "dom");
+        } else if (sectionId === "projects") {
+            activateScene("project:dujas", "dom");
+        }
+
+        if (closeMenu) setIsMobileMenuOpen(false);
+    }, []);
+
     const navVariants = {
         hidden: { y: -100, opacity: 0 },
         visible: {
@@ -72,6 +110,13 @@ export const FloatingNav = ({
         })
     };
 
+    // Brand click mirrors the footer's goHome: smooth scroll + scene reset.
+    const goHome = useCallback(() => {
+        suppressScrollUntilScrollEnd();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        deactivateScene("dom");
+    }, []);
+
     return (
         <AnimatePresence mode="wait">
             <motion.div
@@ -83,68 +128,36 @@ export const FloatingNav = ({
                     isScrolled ? "bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-lg" : "bg-transparent"
                 )}
             >
-                <motion.h3
+                <motion.button
+                    type="button"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                        suppressScrollUntilScrollEnd();
-                        deactivateScene("dom");
-                    }}
+                    onClick={goHome}
+                    aria-label="Back to top — Ariel A. home"
                     className="flex text-center text-xl sm:text-2xl font-bold cursor-pointer bg-gradient-to-r from-[#00ADB5] to-[#009fae] bg-clip-text text-transparent"
                 >
                     Ariel A.
-                </motion.h3>
+                </motion.button>
 
                 <div className={cn("px-4 py-2 rounded-full", className)}>
                     {isDesktop ? (
                         <div className="flex items-center justify-center space-x-4 sm:space-x-8">
-                            {navItems.map((navItem: NavItem, idx: number) => {
-                                const isActive = activeSection === navItem.link.replace("#", "");
+                            {navItems.map((navItem: NavItem) => {
+                                const sectionId = navItem.link.replace("#", "");
+                                const isActive = activeSection === sectionId;
                                 return (
                                     <motion.div
-                                        key={`nav-${idx}`}
-                                        custom={idx}
+                                        key={navItem.name}
+                                        custom={navItems.indexOf(navItem)}
                                         variants={itemVariants}
                                     >
                                         <Link
                                             href={navItem.link}
                                             className="relative group"
+                                            aria-current={isActive ? "true" : undefined}
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                const sectionId = navItem.link.replace("#", "");
-                                                const element = document.getElementById(sectionId);
-
-                                                // Contact now lives in the chat launcher,
-                                                // not an in-page section.
-                                                if (sectionId === "contact" && !element) {
-                                                    setChatOpen(true, "dom");
-                                                    return;
-                                                }
-
-                                                if (element) {
-                                                    const elementPosition = element.getBoundingClientRect().top;
-                                                    const offsetPosition = elementPosition + window.pageYOffset - 80;
-
-                                                    window.scrollTo({
-                                                        top: offsetPosition,
-                                                        behavior: "smooth"
-                                                    });
-                                                }
-
-                                                // Drive nav + 3D camera from the same store.
-                                                // The scroll observers are suppressed until the
-                                                // smooth scroll settles so intermediate sections
-                                                // don't blink the camera.
-                                                suppressScrollUntilScrollEnd();
-                                                if (sectionId === "home") {
-                                                    window.scrollTo({ top: 0, behavior: "smooth" });
-                                                    deactivateScene("dom");
-                                                } else if (sectionId === "about" || sectionId === "skills") {
-                                                    activateScene(sectionId, "dom");
-                                                } else if (sectionId === "projects") {
-                                                    activateScene("project:dujas", "dom");
-                                                }
+                                                goToSection(navItem.link);
                                             }}
                                         >
                                             <div className="flex items-center space-x-2">
@@ -225,51 +238,22 @@ export const FloatingNav = ({
                                 }}
                                 className="flex flex-col space-y-4"
                             >
-                                {navItems.map((navItem: NavItem, idx: number) => {
-                                    const isActive = activeSection === navItem.link.replace("#", "");
+                                {navItems.map((navItem: NavItem) => {
+                                    const sectionId = navItem.link.replace("#", "");
+                                    const isActive = activeSection === sectionId;
                                     return (
                                         <motion.div
-                                            key={`mobile-nav-${idx}`}
+                                            key={navItem.name}
                                             variants={itemVariants}
-                                            custom={idx}
+                                            custom={navItems.indexOf(navItem)}
                                         >
                                             <Link
                                                 href={navItem.link}
                                                 className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                                                aria-current={isActive ? "true" : undefined}
                                                 onClick={(e) => {
                                                     e.preventDefault();
-                                                    const sectionId = navItem.link.replace("#", "");
-                                                    const element = document.getElementById(sectionId);
-
-                                                    // Contact now lives in the chat launcher.
-                                                    if (sectionId === "contact" && !element) {
-                                                        setChatOpen(true, "dom");
-                                                        setIsMobileMenuOpen(false);
-                                                        return;
-                                                    }
-
-                                                    if (element) {
-                                                        const elementPosition = element.getBoundingClientRect().top;
-                                                        const offsetPosition = elementPosition + window.pageYOffset - 80;
-
-                                                        window.scrollTo({
-                                                            top: offsetPosition,
-                                                            behavior: "smooth"
-                                                        });
-                                                    }
-
-                                                    // Same store-driven nav/camera sync as desktop.
-                                                    suppressScrollUntilScrollEnd();
-                                                    if (sectionId === "home") {
-                                                        window.scrollTo({ top: 0, behavior: "smooth" });
-                                                        deactivateScene("dom");
-                                                    } else if (sectionId === "about" || sectionId === "skills") {
-                                                        activateScene(sectionId, "dom");
-                                                    } else if (sectionId === "projects") {
-                                                        activateScene("project:dujas", "dom");
-                                                    }
-
-                                                    setIsMobileMenuOpen(false);
+                                                    goToSection(navItem.link, true);
                                                 }}
                                             >
                                                 {navItem.icon && (

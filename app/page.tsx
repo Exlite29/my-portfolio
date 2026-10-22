@@ -15,7 +15,7 @@ import { navItems } from "@/data";
  */
 export default function Home() {
   return (
-    <main className="relative flex flex-col items-center justify-center mx-auto dark:bg-black-100">
+    <main className="relative flex flex-col items-center justify-center mx-auto">
       <div className="w-full">
         <FloatingNav navItems={navItems} />
         <HybridWorkspace />

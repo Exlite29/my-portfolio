@@ -193,3 +193,49 @@ Split-screen homepage (`components/portfolio/HybridWorkspace.tsx`):
 - First Load JS of `/` is UNCHANGED conceptually: 204 kB (Three/R3F live in an
   async chunk, loaded on demand only).
 - New pin set (do not upgrade piecemeal): `three@0.186.1`, `@react-three/fiber@9.8.2`, `@react-three/drei@10.7.9`, `@types/three@0.186.0` — React 19 peer ranges align.
+
+---
+
+# v3 Cleanup + API hardening (October 2026)
+
+## Contact API (pp/api/contact/route.ts) â€” security
+- Full server-side validation: string-type checks, field length caps (100/150/2000,
+  mirroring client maxLengths), email regex. Server never trusts the client's
+  sanitizeInput.
+- HTML escaping on everything interpolated into the email body; newline strip on
+  the subject (header-injection guard).
+- In-memory rate limit: 5 sends / 10 min per IP (429). Swap for Upstash/Redis if
+  this ever deploys serverless at scale.
+- One cached SMTP transporter (module-level) instead of per-request; env vars are
+  validated (503 with no leaked internals if missing); secure now derives from
+  port (465 = implicit TLS, else STARTTLS); 500s no longer echo error.message.
+
+## Bundle / dead code
+- Deleted ~900 lines of unused components: sections/{hero,about,skills,projects,
+  contact}.tsx, mode-toggle, ui/{button,input,textarea,dropdown-menu,social-icon,
+  TextGenerateEffect,background-beams-with-collision}, context/{Providers,
+  GlobalProvider}, app/provider.tsx (dup of theme-provider), lib/animationPresets.ts.
+- Deleted inert 	ailwind.config.js (Tailwind 4 is CSS-first; nothing referenced it).
+- Removed unused deps: axios (chat form uses fetch now), @radix-ui/react-dropdown-menu,
+  dotted-map, @tabler/icons-react.
+- Removed static PNG imports + image field from data/index.tsx (1.2 MB dujas.png
+  was imported at build time only for dead code).
+- Pruned unused shadcn CSS tokens (sidebar-*/chart-*) from globals.css; defined the
+  missing --toast-bg/--toast-text; fixed --destructive-foreground (light mode
+  had message-on-red same color as background).
+- Removed fake class dark:bg-black-100 from app/page.tsx.
+- Homepage First Load JS: 204 kB -> 177 kB.
+
+## A11y / correctness
+- floating-navbar: desktop + mobile nav click handlers unified into one
+  goToSection() (they had drifted/duplicated); clickable brand h3 became a real
+  utton; stable 
+avItem.name keys and ria-current on active links.
+- useOutsideClick properly typed (no Function/ny).
+- Fixed favicon: layout no longer points at non-existent /icon.png; app/icon.png
+  serves via the App Router file convention.
+- process.env.API_CONTACTS (missing NEXT_PUBLIC_ prefix, always undefined)
+  replaced by NEXT_PUBLIC_CONTACT_API ?? '/api/contact'.
+- hooks/useSceneResetObserver removed (exported, never used); ResumePanel
+  Projects-header focus derives from projects[0].id instead of hardcoding
+  "project:dujas".

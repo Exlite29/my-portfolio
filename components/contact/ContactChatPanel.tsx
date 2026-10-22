@@ -3,10 +3,10 @@
 /**
  * ContactChatPanel — the opened chat card.
  *
- * The form logic is ported VERBATIM from components/sections/contact.tsx
- * (validation -> sanitizeInput -> POST /api/contact); only the presentation
- * changed: fields are staged as a conversation, and status messages render
- * as bot bubbles. Keep both files in sync if the API contract changes.
+ * Validation -> sanitizeInput -> POST (CONTACT_ENDPOINT, see types/contact);
+ * only the presentation is chat-like: fields are staged as a conversation,
+ * and status messages render as bot bubbles. The API contract must stay in
+ * sync with app/api/contact/route.ts (same field caps server-side).
  *
  * Loaded dynamically by ContactLauncher — never in the initial bundle.
  */
@@ -15,9 +15,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FiX } from "react-icons/fi";
 import { socialLinks } from "@/data/socialLinks";
-import { FormData, SubmitStatus, initialFormData, initialSubmitStatus, contactAPI } from "@/types/contact";
+import { FormData, SubmitStatus, initialFormData, initialSubmitStatus, CONTACT_ENDPOINT } from "@/types/contact";
 import { sanitizeInput } from "@/utils/form";
-import axios from "axios";
 
 const BUBBLE = "max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed";
 const BOT = `${BUBBLE} mr-auto bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300`;
@@ -91,26 +90,37 @@ export function ContactChatPanel({ onClose }: { onClose: () => void }) {
         message: sanitizeInput(formData.message),
       };
 
-      const response = await axios.post(
-        contactAPI ?? "/api/contact",
-        { name: sanitizedData.name, email: sanitizedData.email, message: sanitizedData.message },
-        { headers: { "Content-Type": "application/json" } },
-      );
+      const response = await fetch(CONTACT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: sanitizedData.name,
+          email: sanitizedData.email,
+          message: sanitizedData.message,
+        }),
+      }).catch(() => null);
 
-      if (response.status >= 200 && response.status < 300) {
-        setSubmitStatus({ success: true, message: response.data.message || "Message sent successfully!" });
+      if (!response) {
+        throw new Error("Network error — check your connection and try again");
+      }
+
+      const data = await response.json().catch(() => null);
+
+      if (response.ok) {
+        setSubmitStatus({
+          success: true,
+          message: data?.message || "Message sent successfully!",
+        });
         setFormData(initialFormData);
       } else {
-        throw new Error(response.data.message || "Failed to send message");
+        throw new Error(data?.message || "Failed to send message");
       }
     } catch (error: unknown) {
       console.error("Submission error:", error);
-      let errorMessage = "Failed to send message. Please try again later.";
-      if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || error.message || "Network error";
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to send message. Please try again later.";
       setSubmitStatus({ success: false, message: errorMessage });
     } finally {
       setIsSubmitting(false);

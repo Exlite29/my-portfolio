@@ -226,7 +226,7 @@ export function ResumePanel() {
       <section id="projects" className="scroll-mt-24 py-6 pl-4 pr-2">
         <button
           type="button"
-          onClick={() => focusProjects("project:dujas")}
+          onClick={() => focusProjects(("project:" + projects[0].id) as SceneId)}
           className="mb-4 text-left outline-offset-4 focus-visible:outline"
         >
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">

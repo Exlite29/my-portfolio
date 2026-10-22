@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 
+/** Calls `callback` when a pointer interaction happens outside `ref`. */
 export const useOutsideClick = (
-  ref: React.RefObject<HTMLDivElement | null>,
-  callback: Function
+  ref: React.RefObject<HTMLElement | null>,
+  callback: (event: MouseEvent | TouchEvent) => void,
 ) => {
   useEffect(() => {
-    const listener = (event: any) => {
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
         return;
       }
       callback(event);
