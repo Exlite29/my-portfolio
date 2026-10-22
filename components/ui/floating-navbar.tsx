@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { activateScene, deactivateScene, setChatOpen, useActiveSceneId } from "@/lib/scene-store";
@@ -28,6 +28,19 @@ export const FloatingNav = ({
     const isDesktop = useMediaQuery("(min-width: 768px)", { initializeWithValue: false });
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Escape closes the mobile menu and returns focus to its trigger.
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key !== "Escape") return;
+            setIsMobileMenuOpen(false);
+            mobileMenuButtonRef.current?.focus();
+        };
+        document.addEventListener("keydown", onKeyDown);
+        return () => document.removeEventListener("keydown", onKeyDown);
+    }, [isMobileMenuOpen]);
 
     // Navbar background only — the active item is derived from the 3D scene
     // store below (single source of truth shared with the camera; no second
@@ -154,7 +167,7 @@ export const FloatingNav = ({
                                         <Link
                                             href={navItem.link}
                                             className="relative group"
-                                            aria-current={isActive ? "true" : undefined}
+                                            aria-current={isActive ? "page" : undefined}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 goToSection(navItem.link);
@@ -188,12 +201,17 @@ export const FloatingNav = ({
                         </div>
                     ) : (
                         <motion.button
+                            ref={mobileMenuButtonRef}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            onClick={() => setIsMobileMenuOpen((open) => !open)}
+                            aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                            aria-expanded={isMobileMenuOpen}
+                            aria-controls="mobile-navigation"
+                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#00ADB5]"
                         >
                             <svg
+                                aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-6 w-6"
                                 fill="none"
@@ -224,6 +242,7 @@ export const FloatingNav = ({
                 <AnimatePresence>
                     {!isDesktop && isMobileMenuOpen && (
                         <motion.div
+                            id="mobile-navigation"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
@@ -250,7 +269,7 @@ export const FloatingNav = ({
                                             <Link
                                                 href={navItem.link}
                                                 className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                                                aria-current={isActive ? "true" : undefined}
+                                                aria-current={isActive ? "page" : undefined}
                                                 onClick={(e) => {
                                                     e.preventDefault();
                                                     goToSection(navItem.link, true);
