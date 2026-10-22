@@ -48,13 +48,13 @@ export const metadata: Metadata = {
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
     locale: "en_US",
-    images: [{ url: "/icon.png", width: 512, height: 512, alt: "Ariel Agdon logo" }],
+    // Image comes from the app/opengraph-image.png file convention.
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
-    images: ["/icon.png"],
+    // Twitter falls back to og:image (opengraph-image.png).
   },
   robots: {
     index: true,

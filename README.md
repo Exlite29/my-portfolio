@@ -75,6 +75,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run start` | Serve the production build |
 | `npm run lint` | ESLint (flat config) |
 | `npm run typecheck` | TypeScript without emitting |
+| `npm test` | Contact API test suite (Vitest) |
 
 ## Project structure
 
